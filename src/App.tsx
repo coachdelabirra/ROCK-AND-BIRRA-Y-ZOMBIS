@@ -226,9 +226,11 @@ export default function App() {
     if (!player) return;
     const ev = FLAVOR_WALK_EVENTS[Math.floor(Math.random() * FLAVOR_WALK_EVENTS.length)];
     if (ev.caps) {
+      sound.playCapsPickup();
       setPlayer(p => p ? { ...p, caps: p.caps + ev.caps } : null);
       addLog(`🔩 Encuentras ${ev.caps} chapitas tiradas entre el asfalto roto.`, 'item');
     } else if (ev.item) {
+      sound.playBackpack();
       const item = { ...INITIAL_ITEMS[ev.item] };
       setPlayer(p => p ? { ...p, inventory: [...p.inventory, item] } : null);
       addLog(`🎒 ¡Un sobreviviente te arroja un ${item.name}!`, 'item');
@@ -261,6 +263,7 @@ export default function App() {
     };
 
     setActiveEnemy(enemy);
+    sound.playZombieGrowl();
     addLog(`⚔️ ¡Un ${enemy.name} se interpone en tu camino! A pelear.`);
   };
 
@@ -283,7 +286,8 @@ export default function App() {
     };
 
     setActiveEnemy(enemy);
-    sound.playRockPowerChord(164.81);
+    sound.playZombieGrowl();
+    setTimeout(() => sound.playRockPowerChord(164.81), 250);
     addLog(`☠️ ¡EL JEFE ${enemy.name.toUpperCase()} APARECE!`, 'crit');
     addLog(`Atento: prepara ataques especiales periódicos que deberás esquivar con la tecla E.`);
   };
@@ -329,6 +333,7 @@ export default function App() {
       // Check drops
       if (Math.random() < zone.pizzaChance) {
         newPizzas++;
+        sound.playPizzaFound();
         addLog(`🍕 ¡ENCONTRASTE UNA PORCIÓN DE PIZZA! (${newPizzas}/${player.pizzasRequired})`, 'crit');
       }
 
@@ -345,12 +350,14 @@ export default function App() {
       if (activeEnemy.name.includes('Ferro')) {
         ferroDefeated = true;
         newPizzas = Math.min(player.pizzasRequired, newPizzas + 1);
+        sound.playPizzaFound();
         addLog(`🏆 ¡El Comandante Ferro ha caído! Aseguras pizza de la camioneta blindada.`, 'crit');
       }
 
       if (activeEnemy.name.includes('Alma')) {
         almaDefeated = true;
         newBeers = Math.min(player.beersRequired, newBeers + 1);
+        sound.playBeerSound();
         addLog(`🏆 ¡Alma la Sirena ha sido derrotada! El Bar El Aullido queda liberado.`, 'crit');
       }
 
@@ -382,6 +389,10 @@ export default function App() {
         nextExpReq = Math.round(nextExpReq * 1.5);
         sound.playLevelUp();
         addLog(`🎉 ¡SUBISTE DE NIVEL! Ahora eres Nv.${nextLevel} (Vida y Energía recargadas).`, 'crit');
+      }
+
+      if (activeEnemy.caps > 0) {
+        setTimeout(() => sound.playCapsPickup(), 200);
       }
 
       setPlayer({
@@ -423,7 +434,7 @@ export default function App() {
       return;
     }
 
-    sound.playConfirm();
+    sound.playRestSigh();
     advanceApocalypse(2);
 
     setPlayer({
@@ -441,7 +452,7 @@ export default function App() {
     if (!player) return;
 
     if (hs.actionType === 'radio') {
-      sound.playRockPowerChord(220);
+      sound.playMapStatic();
       setIsRadioOpen(true);
       addLog(hs.flavorText, 'item');
       return;
@@ -464,7 +475,14 @@ export default function App() {
         return;
       }
 
-      sound.playConfirm();
+      if (hs.capsReward) {
+        sound.playCapsPickup();
+      } else if (hs.itemReward) {
+        sound.playBackpack();
+      } else {
+        sound.playConfirm();
+      }
+
       const updatedLooted = [...player.lootedHotspots, hs.id];
       let updatedInv = [...player.inventory];
       let updatedCaps = player.caps;
@@ -496,8 +514,10 @@ export default function App() {
   const handleLootSecretRefuge = () => {
     if (!player || player.secretRefugeLooted) return;
 
-    sound.playBeerSound();
-    setTimeout(() => sound.playLevelUp(), 400);
+    sound.playSafeUnlock();
+    setTimeout(() => sound.playCapsPickup(), 250);
+    setTimeout(() => sound.playPizzaFound(), 550);
+    setTimeout(() => sound.playBeerSound(), 850);
 
     const safeItems = [
       { ...INITIAL_ITEMS.botiquin_militar },
@@ -556,6 +576,70 @@ export default function App() {
     setScreen('VICTORY');
   };
 
+  // Absurd black-comedy decision (part of core game loop)
+  const handleStupidDecision = () => {
+    if (!player) return;
+    advanceApocalypse(1);
+
+    const outcomes = [
+      {
+        text: '🤪 DECISIÓN ESTÚPIDA: Le ofreces una IPA artesanal con demasiado lúpulo a un zombi. El zombi la huele, hace arcadas y se aleja horrorizado dejándote 6 chapitas.',
+        apply: (p: PlayerState) => {
+          sound.playCapsPickup();
+          return { ...p, caps: p.caps + 6 };
+        },
+        type: 'item' as const,
+      },
+      {
+        text: '🤪 DECISIÓN ESTÚPIDA: Pones tu solo de guitarra favorito a todo volumen por un megáfono roto. La onda expansiva distrae a la horda y descubres una porción de pizza.',
+        apply: (p: PlayerState) => {
+          sound.playPizzaFound();
+          return { ...p, pizzas: p.pizzas + 1 };
+        },
+        type: 'crit' as const,
+      },
+      {
+        text: '🤪 DECISIÓN ESTÚPIDA: Te pones a discutir con un maniquí sobre si Bon Scott era mejor que Brian Johnson. Te muerde un zombi distraído por la espalda (-3 HP), pero escapas riéndote.',
+        apply: (p: PlayerState) => {
+          sound.playDamage();
+          return { ...p, hp: Math.max(1, p.hp - 3) };
+        },
+        type: 'enemy' as const,
+      },
+      {
+        text: '🤪 DECISIÓN ESTÚPIDA: Das un trago a una botella sin etiqueta que flotaba en un charco. ¡Era licor casero de un rockero! La adrenalina te recarga 6 puntos de energía.',
+        apply: (p: PlayerState) => {
+          sound.playConfirm();
+          return { ...p, energy: Math.min(p.maxEnergy, p.energy + 6) };
+        },
+        type: 'player' as const,
+      },
+      {
+        text: '🤪 DECISIÓN ESTÚPIDA: Desafías a un zombi a una pulseada por una remera de Iron Maiden. Al zombi se le desprende el brazo y encuentras un vendaje limpio en su bolsillo.',
+        apply: (p: PlayerState) => {
+          sound.playBackpack();
+          return { ...p, inventory: [...p.inventory, { ...INITIAL_ITEMS.vendaje }] };
+        },
+        type: 'item' as const,
+      },
+      {
+        text: '🤪 DECISIÓN ESTÚPIDA: Intentas saltar sobre un auto oxidado cantando "Jump" de Van Halen. Aterrizas justo frente a un zombi furioso.',
+        apply: (p: PlayerState) => {
+          const currentZone = ZONES_DATA[p.currentZone];
+          if (currentZone.templates.length > 0) {
+            startRandomEncounter(currentZone);
+          }
+          return p;
+        },
+        type: 'enemy' as const,
+      }
+    ];
+
+    const pick = outcomes[Math.floor(Math.random() * outcomes.length)];
+    addLog(pick.text, pick.type);
+    setPlayer(prev => prev ? pick.apply(prev) : null);
+  };
+
   return (
     <div className="min-h-screen bg-black text-stone-100 flex flex-col font-body relative overflow-x-hidden">
       
@@ -608,6 +692,7 @@ export default function App() {
             onDeclareVictory={handleDeclareVictory}
             onLootSecretRefuge={handleLootSecretRefuge}
             onInteractHotspot={handleInteractHotspot}
+            onStupidDecision={handleStupidDecision}
             onOpenMap={() => setIsMapOpen(true)}
             onOpenInventory={() => setIsInventoryOpen(true)}
             onOpenRadio={() => setIsRadioOpen(true)}

@@ -196,6 +196,340 @@ class SoundEngine {
     osc.stop(t + 0.12);
   }
 
+  // --- Dynamic Player Action Sound Effects ---
+
+  /** Sonido de estática radiofónica / mapa CRT al abrir el mapa */
+  public playMapStatic() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx || !this.sfxGain) return;
+
+    const t = this.ctx.currentTime;
+    const dur = 0.22;
+    const bufferSize = Math.floor(this.ctx.sampleRate * dur);
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      // Crackly radio static noise
+      data[i] = (Math.random() * 2 - 1) * (Math.random() > 0.1 ? 0.8 : 1.5);
+    }
+
+    const noise = this.ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(1400, t);
+    filter.frequency.exponentialRampToValueAtTime(2600, t + dur);
+    filter.Q.value = 2.5;
+
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.35, t);
+    gain.gain.exponentialRampToValueAtTime(0.01, t + dur);
+
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.sfxGain);
+
+    noise.start(t);
+
+    // Beep overlay
+    const beep = this.ctx.createOscillator();
+    const beepGain = this.ctx.createGain();
+    beep.type = 'sine';
+    beep.frequency.setValueAtTime(940, t);
+    beepGain.gain.setValueAtTime(0.15, t);
+    beepGain.gain.exponentialRampToValueAtTime(0.005, t + 0.08);
+
+    beep.connect(beepGain);
+    beepGain.connect(this.sfxGain);
+    beep.start(t);
+    beep.stop(t + 0.08);
+  }
+
+  /** Sonido metálico de chapitas de botella al recoger dinero / chapas */
+  public playCapsPickup() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx || !this.sfxGain) return;
+
+    const t = this.ctx.currentTime;
+    // 3 metallic tinkling frequencies simulating metal crown bottle caps
+    const freqs = [
+      [2450, 3100, 4200],
+      [2800, 3600, 4900],
+      [2200, 2900, 3900]
+    ];
+
+    freqs.forEach((chord, step) => {
+      const delay = step * 0.045;
+      chord.forEach((freq) => {
+        const osc = this.ctx!.createOscillator();
+        const gain = this.ctx!.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, t + delay);
+
+        gain.gain.setValueAtTime(0.18, t + delay);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + delay + 0.09);
+
+        osc.connect(gain);
+        gain.connect(this.sfxGain!);
+
+        osc.start(t + delay);
+        osc.stop(t + delay + 0.09);
+      });
+    });
+  }
+
+  /** Sonido de pisadas y crujido entre escombros */
+  public playFootstepsRubble() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx || !this.sfxGain) return;
+
+    const t = this.ctx.currentTime;
+    [0, 0.14].forEach((offset) => {
+      const bufSize = Math.floor(this.ctx!.sampleRate * 0.08);
+      const buf = this.ctx!.createBuffer(1, bufSize, this.ctx!.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < bufSize; i++) d[i] = Math.random() * 2 - 1;
+
+      const src = this.ctx!.createBufferSource();
+      src.buffer = buf;
+
+      const filter = this.ctx!.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 520;
+      filter.Q.value = 1.2;
+
+      const gain = this.ctx!.createGain();
+      gain.gain.setValueAtTime(0.28, t + offset);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + offset + 0.08);
+
+      src.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.sfxGain!);
+
+      src.start(t + offset);
+    });
+  }
+
+  /** Sonido de abrir mochila / cremallera / hebilla */
+  public playBackpack() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx || !this.sfxGain) return;
+
+    const t = this.ctx.currentTime;
+    // Rapid zipper sweeps
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sawtooth';
+
+    osc.frequency.setValueAtTime(800, t);
+    osc.frequency.linearRampToValueAtTime(2200, t + 0.08);
+    osc.frequency.setValueAtTime(1200, t + 0.09);
+    osc.frequency.linearRampToValueAtTime(2600, t + 0.16);
+
+    gain.gain.setValueAtTime(0.2, t);
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.16);
+
+    osc.connect(gain);
+    gain.connect(this.sfxGain);
+
+    osc.start(t);
+    osc.stop(t + 0.16);
+  }
+
+  /** Sonido de pizza crujiente encontrada */
+  public playPizzaFound() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx || !this.sfxGain) return;
+
+    const t = this.ctx.currentTime;
+    // Happy bright chord + crunch
+    const notes = [523.25, 659.25, 783.99, 1046.50]; // C Major
+    notes.forEach((freq, idx) => {
+      const osc = this.ctx!.createOscillator();
+      const gain = this.ctx!.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, t + idx * 0.05);
+
+      gain.gain.setValueAtTime(0.28, t + idx * 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + idx * 0.05 + 0.25);
+
+      osc.connect(gain);
+      gain.connect(this.sfxGain!);
+
+      osc.start(t + idx * 0.05);
+      osc.stop(t + idx * 0.05 + 0.25);
+    });
+  }
+
+  /** Sonido de gruñido zombi hostil */
+  public playZombieGrowl() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx || !this.sfxGain) return;
+
+    const t = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sawtooth';
+
+    osc.frequency.setValueAtTime(85, t);
+    osc.frequency.linearRampToValueAtTime(55, t + 0.35);
+
+    // Formant throat filter
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'peaking';
+    filter.frequency.setValueAtTime(450, t);
+    filter.Q.value = 4.0;
+    filter.gain.value = 12;
+
+    gain.gain.setValueAtTime(0.4, t);
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.35);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.sfxGain);
+
+    osc.start(t);
+    osc.stop(t + 0.35);
+  }
+
+  /** Sonido de apertura de caja fuerte secreta (mecanismo pesado) */
+  public playSafeUnlock() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx || !this.sfxGain) return;
+
+    const t = this.ctx.currentTime;
+    // Heavy tumbler clicks + latch release
+    const clicks = [0, 0.08, 0.16, 0.26];
+    clicks.forEach((timeOffset, idx) => {
+      const osc = this.ctx!.createOscillator();
+      const gain = this.ctx!.createGain();
+      osc.type = idx === clicks.length - 1 ? 'sawtooth' : 'triangle';
+      osc.frequency.setValueAtTime(idx === clicks.length - 1 ? 120 : 1600 + idx * 200, t + timeOffset);
+
+      gain.gain.setValueAtTime(0.35, t + timeOffset);
+      gain.gain.exponentialRampToValueAtTime(0.005, t + timeOffset + 0.06);
+
+      osc.connect(gain);
+      gain.connect(this.sfxGain!);
+
+      osc.start(t + timeOffset);
+      osc.stop(t + timeOffset + 0.06);
+    });
+  }
+
+  /** Sonido de descanso reconfortante en el búnker */
+  public playRestSigh() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx || !this.sfxGain) return;
+
+    const t = this.ctx.currentTime;
+    // Warm Major 7th chord (C4, E4, G4, B4)
+    const chord = [261.63, 329.63, 392.00, 493.88];
+    chord.forEach((freq) => {
+      const osc = this.ctx!.createOscillator();
+      const gain = this.ctx!.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, t);
+
+      gain.gain.setValueAtTime(0.18, t);
+      gain.gain.exponentialRampToValueAtTime(0.005, t + 0.8);
+
+      osc.connect(gain);
+      gain.connect(this.sfxGain!);
+
+      osc.start(t);
+      osc.stop(t + 0.8);
+    });
+  }
+
+  /** Sonido de fuego / explosión de Molotov (Punk) */
+  public playMolotovWhoosh() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx || !this.sfxGain) return;
+
+    const t = this.ctx.currentTime;
+    const bufferSize = Math.floor(this.ctx.sampleRate * 0.35);
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const d = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) d[i] = Math.random() * 2 - 1;
+
+    const noise = this.ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(350, t);
+    filter.frequency.exponentialRampToValueAtTime(2400, t + 0.15);
+    filter.frequency.exponentialRampToValueAtTime(600, t + 0.35);
+
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.5, t);
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.35);
+
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.sfxGain);
+
+    noise.start(t);
+  }
+
+  /** Sonido de latigazo de cadena metálica (Motoquero) */
+  public playChainWhip() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx || !this.sfxGain) return;
+
+    const t = this.ctx.currentTime;
+    // Whoosh
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, t);
+    osc.frequency.exponentialRampToValueAtTime(200, t + 0.1);
+
+    gain.gain.setValueAtTime(0.3, t);
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+    osc.connect(gain);
+    gain.connect(this.sfxGain);
+    osc.start(t);
+    osc.stop(t + 0.1);
+
+    // Metal chain snap
+    setTimeout(() => {
+      if (!this.ctx || !this.sfxGain) return;
+      const clank1 = this.ctx!.createOscillator();
+      const clank2 = this.ctx!.createOscillator();
+      const clankGain = this.ctx!.createGain();
+
+      clank1.type = 'square';
+      clank1.frequency.setValueAtTime(1750, this.ctx!.currentTime);
+      clank2.type = 'sawtooth';
+      clank2.frequency.setValueAtTime(2380, this.ctx!.currentTime);
+
+      clankGain.gain.setValueAtTime(0.35, this.ctx!.currentTime);
+      clankGain.gain.exponentialRampToValueAtTime(0.01, this.ctx!.currentTime + 0.09);
+
+      clank1.connect(clankGain);
+      clank2.connect(clankGain);
+      clankGain.connect(this.sfxGain!);
+
+      clank1.start(this.ctx!.currentTime);
+      clank2.start(this.ctx!.currentTime);
+      clank1.stop(this.ctx!.currentTime + 0.09);
+      clank2.stop(this.ctx!.currentTime + 0.09);
+    }, 70);
+  }
+
   public playRockPowerChord(frequency = 164.81) {
     if (this.isMuted) return;
     this.initContext();

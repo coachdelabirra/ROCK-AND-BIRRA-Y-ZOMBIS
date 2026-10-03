@@ -112,10 +112,14 @@ export const CombatModal: React.FC<CombatModalProps> = ({
         let damage = Math.round(player.attack * 2.2);
         if (player.classKey === 'punk') {
           damage += 6; // ignores defense bonus
+          sound.playMolotovWhoosh();
+        } else if (player.classKey === 'motoquero') {
+          sound.playChainWhip();
+        } else {
+          sound.playRockPowerChord(293.66);
         }
         const finalHp = Math.max(0, enemyHp - damage);
         setEnemyHp(finalHp);
-        sound.playRockPowerChord(293.66);
         addLog(`⚡ ¡HABILIDAD ${playerClass.skillName.toUpperCase()}! ${damage} de daño masivo.`);
 
         if (finalHp <= 0) {
@@ -227,12 +231,15 @@ export const CombatModal: React.FC<CombatModalProps> = ({
   };
 
   const executeEnemyStandardAttack = () => {
+    sound.playZombieGrowl();
     const rawDamage = enemy.attack + Math.floor(Math.random() * 3);
     const damageReal = Math.max(1, rawDamage - player.defense);
     const nextHp = Math.max(0, playerHp - damageReal);
     setPlayerHp(nextHp);
 
-    sound.playDamage();
+    setTimeout(() => {
+      sound.playDamage();
+    }, 150);
     addLog(`🧟 ${enemy.name} te ataca vorazmente: recibes ${damageReal} de daño.`);
 
     // Player naturally regains 1 energy per round
@@ -447,7 +454,10 @@ export const CombatModal: React.FC<CombatModalProps> = ({
 
           <button
             disabled={!isPlayerTurn || isDodgeActive || player.inventory.length === 0}
-            onClick={() => setIsItemsOpen(!isItemsOpen)}
+            onClick={() => {
+              if (!isItemsOpen) sound.playBackpack();
+              setIsItemsOpen(!isItemsOpen);
+            }}
             className="nes-btn p-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white font-bungee text-xs rounded cursor-pointer flex flex-col items-center justify-center gap-1 shadow-[3px_3px_0px_#000]"
           >
             <span className="text-lg">🎒</span>

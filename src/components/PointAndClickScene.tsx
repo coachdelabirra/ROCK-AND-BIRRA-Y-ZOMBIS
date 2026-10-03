@@ -26,6 +26,7 @@ interface PointAndClickSceneProps {
   onDeclareVictory: () => void;
   onLootSecretRefuge: () => void;
   onInteractHotspot: (hotspot: PointAndClickHotspot) => void;
+  onStupidDecision: () => void;
   onOpenMap: () => void;
   onOpenInventory: () => void;
   onOpenRadio: () => void;
@@ -41,6 +42,7 @@ export const PointAndClickScene: React.FC<PointAndClickSceneProps> = ({
   onDeclareVictory,
   onLootSecretRefuge,
   onInteractHotspot,
+  onStupidDecision,
   onOpenMap,
   onOpenInventory,
   onOpenRadio,
@@ -190,7 +192,7 @@ export const PointAndClickScene: React.FC<PointAndClickSceneProps> = ({
                 return (
                   <button
                     key={targetKey}
-                    onClick={() => { sound.playConfirm(); onMoveToZone(targetKey); }}
+                    onClick={() => { sound.playFootstepsRubble(); onMoveToZone(targetKey); }}
                     className="nes-btn px-3 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 text-left flex items-center justify-between gap-2 rounded cursor-pointer group"
                   >
                     <div>
@@ -225,7 +227,7 @@ export const PointAndClickScene: React.FC<PointAndClickSceneProps> = ({
                 {/* Rubble Search / Combat Encounter Trigger */}
                 {currentZone.templates.length > 0 && (
                   <button
-                    onClick={() => { sound.playBlip(); onExploreRubble(); }}
+                    onClick={() => { sound.playFootstepsRubble(); onExploreRubble(); }}
                     className="w-full nes-btn p-2.5 bg-red-600 hover:bg-red-500 text-white font-bungee text-xs flex items-center gap-2 rounded cursor-pointer text-left"
                   >
                     <Search className="w-4 h-4 shrink-0 text-amber-300" />
@@ -237,6 +239,21 @@ export const PointAndClickScene: React.FC<PointAndClickSceneProps> = ({
                     </div>
                   </button>
                 )}
+
+                {/* Tomar Decisión Estúpida / Situación Absurda */}
+                <button
+                  onClick={() => onStupidDecision()}
+                  className="w-full nes-btn p-2.5 bg-amber-600 hover:bg-amber-500 text-black font-bungee text-xs flex items-center gap-2 rounded cursor-pointer text-left shadow-[2px_2px_0px_#000]"
+                  title="Meterse en problemas absurdos y sobrevivir de milagro"
+                >
+                  <span className="text-base">🤪</span>
+                  <div>
+                    <div>TOMAR DECISIÓN ESTÚPIDA</div>
+                    <div className="font-pixel text-[11px] text-stone-950 font-bold">
+                      Comedia negra / Sobrevivir de milagro
+                    </div>
+                  </div>
+                </button>
 
                 {/* Bunker Rest */}
                 {currentZone.isSafeBunker && (
@@ -305,7 +322,7 @@ export const PointAndClickScene: React.FC<PointAndClickSceneProps> = ({
 
                 {/* Quick Radio Toggle */}
                 <button
-                  onClick={() => { sound.playBlip(); onOpenRadio(); }}
+                  onClick={() => { sound.playMapStatic(); onOpenRadio(); }}
                   className="w-full nes-btn p-2 bg-stone-800 hover:bg-stone-700 text-stone-200 font-pixel text-xs flex items-center gap-2 rounded cursor-pointer text-left"
                 >
                   <Radio className="w-4 h-4 text-amber-400" />
@@ -314,7 +331,7 @@ export const PointAndClickScene: React.FC<PointAndClickSceneProps> = ({
 
                 {/* Quick Map Button */}
                 <button
-                  onClick={() => { sound.playBlip(); onOpenMap(); }}
+                  onClick={() => { sound.playMapStatic(); onOpenMap(); }}
                   className="w-full nes-btn p-2 bg-stone-800 hover:bg-stone-700 text-stone-200 font-pixel text-xs flex items-center gap-2 rounded cursor-pointer text-left"
                 >
                   <MapIcon className="w-4 h-4 text-sky-400" />

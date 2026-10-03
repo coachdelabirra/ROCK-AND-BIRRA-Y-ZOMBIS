@@ -68,18 +68,37 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
         <h1 className="font-bungee text-4xl sm:text-5xl md:text-6xl text-amber-400 drop-shadow-[4px_4px_0px_#000] tracking-tight leading-none mb-3">
           ROCK AND BIRRA
           <span className="block text-3xl sm:text-4xl md:text-5xl text-red-500 mt-1">
-            AND PIZZA Y ZOMBIS
+            Y ZOMBIS
           </span>
         </h1>
 
+        {/* Protagonist Intro & Golden Rule */}
+        <div className="bg-stone-900/90 border-2 border-amber-500/60 p-3 rounded max-w-xl mx-auto mb-4 text-xs font-body text-stone-200">
+          <p className="font-rock text-sm text-amber-300 mb-1">
+            Protagonista: {GAME_MANIFESTO.protagonist}
+          </p>
+          <p className="leading-snug text-stone-300 mb-2">
+            {GAME_MANIFESTO.protagonistBio}
+          </p>
+          <div className="bg-black/60 py-1 px-2 rounded border border-stone-800 font-pixel text-xs text-emerald-400 font-bold">
+            {GAME_MANIFESTO.goldenRule}
+          </div>
+        </div>
+
         {/* Iconic Slogan & Hashtag */}
-        <div className="space-y-1 mb-6">
-          <p className="font-rock text-xl md:text-2xl text-stone-200 tracking-wide drop-shadow">
+        <div className="space-y-1 mb-5">
+          <p className="font-rock text-lg md:text-xl text-stone-200 tracking-wide drop-shadow">
             {GAME_MANIFESTO.slogan}
           </p>
           <div className="inline-block bg-amber-400 text-stone-950 font-bungee px-3 py-0.5 text-xs rounded border border-black shadow-[2px_2px_0px_#000]">
             {GAME_MANIFESTO.hashtag}
           </div>
+        </div>
+
+        {/* Bucle del Juego */}
+        <div className="bg-black/60 border border-stone-800 p-2 rounded max-w-lg mx-auto mb-5 text-[11px] font-pixel text-stone-400 text-center leading-relaxed">
+          <span className="text-amber-400 font-bold font-bungee block text-[10px] mb-0.5">BUCLE DE SUPERVIVENCIA:</span>
+          {GAME_MANIFESTO.loop}
         </div>
 
         {/* Mascot & Skull Comic Showcase */}

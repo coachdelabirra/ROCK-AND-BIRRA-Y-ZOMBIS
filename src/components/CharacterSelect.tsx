@@ -44,6 +44,20 @@ export const CharacterSelect: React.FC<CharacterSelectProps> = ({
           </div>
         </div>
 
+        {/* Protagonist Lore Banner */}
+        <div className="nes-box p-3 bg-stone-900 border-2 border-amber-500/70 text-xs text-stone-200">
+          <div className="flex items-center gap-2 font-bungee text-amber-400 text-xs mb-1">
+            <span>🍺</span>
+            <span>PROTAGONISTA: EL COACH DE LA BIRRA</span>
+          </div>
+          <p className="font-body text-stone-300 text-xs leading-relaxed mb-2">
+            Un sobreviviente común y corriente que, por alguna inexplicable razón, considera que sobrevivir al apocalipsis no tiene sentido si no puede terminar el día con una buena pizza y una cerveza helada.
+          </p>
+          <div className="bg-black/70 p-1.5 rounded border border-stone-800 font-pixel text-emerald-400 font-bold text-center">
+            Regla Principal: “Mientras quede una pizza y una cerveza, todavía no se acaba el mundo.”
+          </div>
+        </div>
+
         <form onSubmit={handleStart} className="space-y-6">
           
           {/* Survivor Name Input */}

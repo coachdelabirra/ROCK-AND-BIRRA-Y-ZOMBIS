@@ -33,24 +33,29 @@ export const VictoryScreen: React.FC<VictoryScreenProps> = ({ player, onPlayAgai
         {/* Big Victory Heading */}
         <div>
           <span className="font-pixel text-xs text-amber-300 font-bold uppercase tracking-widest block mb-1">
-            ¡MISIÓN CUMPLIDA! · EL BÚNKER ESTÁ DE FIESTA
+            ROCK AND BIRRA Y ZOMBIS · EL BÚNKER ESTÁ DE FIESTA
           </span>
           <h1 className="font-bungee text-3xl sm:text-4xl md:text-5xl text-amber-400 leading-tight">
             ¡VICTORIA TOTAL!
           </h1>
           <p className="font-rock text-lg text-emerald-400 mt-1">
-            "Esta vaina se jodió... pero sobrevivimos con estilo."
+            "Esta vaina se jodió... pero sobrevivimos de milagro."
           </p>
         </div>
 
         {/* Narrative Celebration Story */}
         <div className="bg-black/70 border-2 border-stone-800 p-4 rounded-lg text-left font-body text-sm space-y-3 text-stone-200">
           <p className="leading-relaxed">
-            <strong className="text-amber-400 font-bungee">{player.name.toUpperCase()}</strong> entra pateando la puerta blindada del búnker con las bolsas rebalsando. Pones la pizza caliente en el medio de la mesa de madera y destapas una botella de cerveza artesanal con un chasquido celestial.
+            <strong className="text-amber-400 font-bungee">{player.name.toUpperCase()}</strong> entra pateando la puerta blindada del búnker con las cajas de pizza y las birras heladas intactas.
           </p>
-          <p className="font-rock text-base text-amber-300 text-center py-1">
-            “Mientras quede una pizza y una cerveza bien fría, todavía no se acaba el mundo.”
-          </p>
+          <div className="bg-amber-950/40 border border-amber-600/60 p-2.5 rounded text-center">
+            <p className="font-rock text-base text-amber-300">
+              {GAME_MANIFESTO.goldenRule}
+            </p>
+            <p className="font-pixel text-xs text-stone-400 mt-1">
+              Bucle completado: Explorar → Conseguir comida/birra → Combatir zombis → Saquear lugares → Sobrevivir de milagro.
+            </p>
+          </div>
           <p className="text-xs text-stone-400 text-center">
             El generador tose humo, la radio sintoniza un solo de guitarra atronador y los zombis afuera solo pueden escuchar la fiesta de la resistencia.
           </p>

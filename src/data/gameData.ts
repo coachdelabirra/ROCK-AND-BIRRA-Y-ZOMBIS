@@ -8,7 +8,12 @@ import {
 } from '../types/game';
 
 export const GAME_MANIFESTO = {
-  title: 'ROCK AND BIRRA AND PIZZA Y ZOMBIS',
+  title: 'ROCK AND BIRRA Y ZOMBIS',
+  protagonist: 'El Coach de la Birra',
+  protagonistBio: 'Un sobreviviente común y corriente que, por alguna inexplicable razón, considera que sobrevivir al apocalipsis no tiene sentido si no puede terminar el día con una buena pizza y una cerveza helada.',
+  goldenRule: '“Mientras quede una pizza y una cerveza, todavía no se acaba el mundo.”',
+  loop: 'Explorar → conseguir comida/birra → combatir zombis → saquear lugares → mejorar equipo → tomar decisiones estúpidas → meterse en problemas → sobrevivir de milagro → repetir.',
+  worldLore: 'La civilización cayó. Las ciudades están llenas de zombis, supermercados saqueados, bares abandonados, estaciones de servicio convertidas en fortalezas y bandas de sobrevivientes bastante más peligrosas que los muertos vivientes.',
   slogan: '“Esta vaina se jodió... hay que sobrevivir.”',
   hashtag: '#YConCervezaMejor',
   text: 'La vida es muy corta para tomar cerveza barata y escuchar mala música. ¡Salud!',
@@ -681,9 +686,13 @@ export const TRIVIA_DATABASE: TriviaQuestion[] = [
 ];
 
 export const FLAVOR_WALK_EVENTS = [
-  { text: '🔩 Entre un montón de escombros y casquillos encuentras {caps} chapitas.', caps: 5 },
+  { text: '🔩 Entre un montón de escombros y casquillos encuentras 5 chapitas.', caps: 5 },
   { text: '🩹 Un sobreviviente en harapos te arroja un vendaje limpio antes de perderse en un callejón.', item: 'vendaje' },
-  { text: '⚠️ ¡Cuidado! Pisaste una tabla podrida con clavos oxidados: pierdes {damage} de vida.', damage: 4 },
+  { text: '⚠️ ¡Cuidado! Pisaste una tabla podrida con clavos oxidados: pierdes 4 de vida.', damage: 4 },
   { text: '📻 Una radio a pilas en una ventana sintoniza estática y de golpe explota un punteo de guitarra.', sound: true },
-  { text: '🍕 Un aroma tenue a salsa de tomate y queso fundido flota en el viento otoñal. ¡Estás cerca!', sound: false }
+  { text: '🍕 Un aroma tenue a salsa de tomate y queso fundido flota en el viento otoñal. ¡Estás cerca!', sound: false },
+  { text: '🎸 Te detienes 10 minutos en medio de un cruce a debatir contigo mismo si el solo de "Comfortably Numb" es insuperable. Sobrevives de milagro.', sound: true },
+  { text: '🍺 Divisas una lata de cerveza artesanal intacta pero tibia. La abres y te la tomas con orgullo: #YConCervezaMejor.', item: 'birra_artesanal' },
+  { text: '🤦‍♂️ Decisión absurda: intentas razonar pacíficamente con un zombi explicándole la discografía de Led Zeppelin. Te tira un mordisco y huyes a las carcajadas.', damage: 3 },
+  { text: '🔩 Encuentras un cenicero metálico de bar lleno de chapitas brillantes: ganas 6 chapas.', caps: 6 }
 ];

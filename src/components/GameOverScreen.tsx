@@ -28,7 +28,7 @@ export const GameOverScreen: React.FC<GameOverScreenProps> = ({
         {/* Big Game Over Heading */}
         <div>
           <span className="font-pixel text-xs text-red-400 font-bold uppercase tracking-widest block mb-1">
-            {reason === 'apocalypse' ? 'EL RELOJ LLEGÓ A CERO' : 'CAÍSTE EN COMBATE'}
+            ROCK AND BIRRA Y ZOMBIS · {reason === 'apocalypse' ? 'EL RELOJ LLEGÓ A CERO' : 'CAÍSTE EN COMBATE'}
           </span>
           <h1 className="font-bungee text-3xl sm:text-4xl text-red-500 leading-tight">
             {reason === 'apocalypse' 
@@ -41,13 +41,16 @@ export const GameOverScreen: React.FC<GameOverScreenProps> = ({
         <div className="bg-black/70 border-2 border-stone-800 p-4 rounded-lg font-body text-sm text-stone-300 leading-relaxed">
           {reason === 'apocalypse' ? (
             <p>
-              El cielo tomó un color violeta radioactivo definitivo. Los zombis coparon hasta el último rincón del barrio. En algún lugar, una guitarra desafinada suena por última vez... y vos te quedaste sin pizza ni cerveza fría.
+              El cielo tomó un color violeta radioactivo definitivo. Los zombis coparon hasta el último rincón del barrio. En algún lugar, una guitarra desafinada suena por última vez... y el Coach se quedó sin pizza ni cerveza fría.
             </p>
           ) : (
             <p>
               Tu cuerpo se suma a la colección de huesos del barrio abandonado. Sin pizza. Sin birra. Sin gloria. Los zombis ahora usan tu campera de cuero como trapo de piso.
             </p>
           )}
+          <p className="font-rock text-xs text-amber-300 mt-2 text-center">
+            Regla del Coach: "Mientras quede una pizza y una cerveza, todavía no se acaba el mundo."
+          </p>
         </div>
 
         {/* Stats summary before death */}

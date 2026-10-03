@@ -60,8 +60,8 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
         
         {/* Brand & Character Tag */}
         <div className="flex items-center gap-3">
-          <div className="bg-amber-500 text-black font-bungee text-xs px-2 py-1 border-2 border-black rounded shadow-[2px_2px_0px_#000]">
-            ROCK & BIRRA
+          <div className="bg-amber-500 text-black font-bungee text-xs px-2.5 py-1 border-2 border-black rounded shadow-[2px_2px_0px_#000]">
+            ROCK & BIRRA Y ZOMBIS
           </div>
           <div>
             <div className="font-bungee text-sm tracking-wide text-amber-400 flex items-center gap-1.5">
@@ -71,7 +71,7 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
               </span>
             </div>
             <div className="text-[11px] text-stone-400 font-pixel tracking-wider">
-              #YConCervezaMejor · {player.classKey.toUpperCase()}
+              "Mientras quede pizza y cerveza..." · {player.classKey.toUpperCase()}
             </div>
           </div>
         </div>
@@ -159,7 +159,7 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
         {/* Action Controls & Radio */}
         <div className="flex items-center gap-1.5">
           <button
-            onClick={() => { sound.playConfirm(); onOpenRadio(); }}
+            onClick={() => { sound.playMapStatic(); onOpenRadio(); }}
             className="nes-btn px-2.5 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-bold flex items-center gap-1.5 cursor-pointer rounded"
             title="Sintonizar Rock & Birra Radio"
           >
@@ -168,16 +168,16 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
           </button>
 
           <button
-            onClick={() => { sound.playConfirm(); onOpenMap(); }}
+            onClick={() => { sound.playMapStatic(); onOpenMap(); }}
             className="nes-btn px-2.5 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-bold flex items-center gap-1.5 cursor-pointer rounded"
-            title="Ver mapa del barrio"
+            title="Ver mapa del barrio (sonido de estática)"
           >
             <MapIcon className="w-3.5 h-3.5 text-sky-400" />
             <span className="hidden sm:inline font-pixel text-xs">MAPA</span>
           </button>
 
           <button
-            onClick={() => { sound.playConfirm(); onOpenInventory(); }}
+            onClick={() => { sound.playBackpack(); onOpenInventory(); }}
             className="nes-btn px-2.5 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-bold flex items-center gap-1.5 cursor-pointer rounded relative"
             title="Abrir mochila / inventario"
           >
